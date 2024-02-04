@@ -1,16 +1,25 @@
-# xiaogpt
+# xiaogpt（小爱音箱接入大语言模型 LLM）
 
 [![PyPI](https://img.shields.io/pypi/v/xiaogpt?style=flat-square)](https://pypi.org/project/xiaogpt)
 [![Docker Image Version (latest by date)](https://img.shields.io/docker/v/yihong0618/xiaogpt?color=%23086DCD&label=docker%20image)](https://hub.docker.com/r/yihong0618/xiaogpt)
 
-https://user-images.githubusercontent.com/15976103/226803357-72f87a41-a15b-409e-94f5-e2d262eecd53.mp4
+
+## 一、简介
+
+### 1.1 简介
+
+小爱音箱支持接入 ChatGPT、通义千问等大语言模型。
+
+本仓库从 [yihong0618/xiaogpt](https://github.com/yihong0618/xiaogpt) fork 而来，针对部分场景做了一些优化调整，特别是针对国内网络环境，对阿里巴巴`通义千问`的接入和使用做了更为详细的说明。
 
 Play ChatGPT and other LLM with Xiaomi AI Speaker
 
 ![image](https://user-images.githubusercontent.com/15976103/220028375-c193a859-48a1-4270-95b6-ef540e54a621.png)
-![image](https://user-images.githubusercontent.com/15976103/226802344-9c71f543-b73c-4a47-8703-4c200c434dec.png)
 
-## 支持的 AI 类型
+https://user-images.githubusercontent.com/15976103/226803357-72f87a41-a15b-409e-94f5-e2d262eecd53.mp4
+
+
+### 1.2 支持的 AI LLM 类型
 
 - GPT3
 - ChatGPT
@@ -20,28 +29,119 @@ Play ChatGPT and other LLM with Xiaomi AI Speaker
 - [Bard](https://github.com/dsdanielpark/Bard-API)
 - [通义千问](https://help.aliyun.com/zh/dashscope/developer-reference/api-details)
 
-## Windows 获取小米音响DID
-
-1. `pip install miservice_fork`
-2. `set MI_USER=xxxx`
-3. `set MI_PASS=xxx`
-4. `micli list` 得到did
-5. `set MI_DID=xxxx`
-
-- 如果获取did报错时，请更换一下无线网络，有很大概率解决问题。
-
-## 一点原理
+### 1.3 一点原理（by [yihong0618](https://github.com/yihong0618)）
 
 [不用 root 使用小爱同学和 ChatGPT 交互折腾记](https://github.com/yihong0618/gitblog/issues/258)
 
-## 准备
 
-1. ChatGPT id
+## 二、接入通义千问的示例
+
+### 2.1 准备
+
+1. 阿里云模型服务灵积 DashScope - 通义千问 API key
 2. 小爱音响
-3. 能正常联网的环境或 proxy
-4. python3.8+
+3. python3.8+
 
-## 使用
+### 2.2 获取小米音响DID
+
+参考：
+- Fork 版：<https://github.com/yihong0618/MiService>
+- 原始仓库：<https://github.com/Yonsm/MiService>
+
+获取步骤：
+
+第1步：
+> 建议使用 virtualenv，避免污染全局 Python 环境
+> 如果想要本地做一些修改，也可以：`git clone git@github.com:yihong0618/MiService.git` 后 `pip3 install .`
+
+    pip install miservice_fork`
+
+第2步（设置环境变量）：
+> 注：如果遇到特殊字符问题，也可以直接修改 `miservice/cli.py` 中 `env.get("MI_USER")` 及 `env.get("MI_PASS")` 部分，直接替换为真是的用户名及密码。
+
+    export MI_USER=xxxx
+    export MI_PASS=xxx
+
+第3步（获取小米设备ID，取小爱音箱设备配置的 `did` 字段）：
+> 示例返回：
+> {
+>   "name": "小爱",
+>   "model": "xiaomi.wifispeaker.l06a",
+>   "did": "xxxxxx",
+>   "token": "xxxxxx"
+> }
+
+    micli list
+
+后续可将 MI_DID 设置进环境变量，供后续 xiaogpt 获取。
+
+> 获取 DID 报错时，可以尝试更换一下无线网络
+>
+> 常见问题：
+> 1. 报错 `AttributeError: 'NoneType' object has no attribute 'encode'`，可以看看是否未成功设置环境变量（例如 bash 下是否未使用 export 而是使用了 set）。
+> 2. 在 `self.token['userId'] = resp['userId']` 的地方报错，可以看看 MI_USER 是否用的是小米 ID 而非可以用于登录的小米邮箱或用户名。
+
+
+### 2.3 运行 xiaogpt
+
+安装 xiaogpt 及依赖
+> 建议使用 virtualenv，避免污染全局 Python 环境
+
+    pip install -U --force-reinstall xiaogpt
+
+    # 或本地安装
+    git clone https://github.com/yihong0618/xiaogpt.git
+    pip3 install .
+
+参考 2.2 获取小爱设备 DID 后，设置 MI_DID 环境变量
+
+    export MI_DID=xxxxxx
+
+获取小爱音箱设备型号，在小爱音箱底部：
+
+    L06A
+
+快捷运行：
+> 本 fork 中将千问模型改为 qwen_max（因为 24 年初 qwen_max 限免，不计算 token 费用）
+> 若需要调整回 qwen_turbo 等其他模型，可在 `qwen_bot.py` 中搜索替换 `Generation.Models.qwen_max`
+> 同时为了使用 qwen_max，本仓库升级了部分保版本：`dashscope==1.14.1`
+
+    xiaogpt --hardware L06A --mute_xiaoai --use_qwen --qwen_key 'sk-xxxxxx' --stream
+
+常用参数：
+
+    -- stream  # 是否流式输出
+
+也可以通过配置文件运行，复制仓库下的 `xiao_config.json.example`，修改对应字段（以运行千问为例）：
+
+    {
+      "hardware": "L06A",
+      "qwen_key": "sk-xxxxxx",
+      "mi_did": "xxxxxx",
+      "use_command": false,
+      "mute_xiaoai": true,
+      "verbose": false,
+      "tts": "mi",
+      "edge_tts_voice": "zh-CN-XiaoxiaoNeural",
+      "prompt": "请用100字以内回答",
+      "keyword": ["请"],
+      "change_prompt_keyword": ["更改提示词"],
+      "start_conversation": "开始持续对话",
+      "end_conversation": "结束持续对话",
+      "stream": false,
+      "use_qwen": true
+    }
+
+然后运行：
+
+    python3 xiaogpt.py --config xiao_config.json
+
+
+接下来即可与小爱音箱对话，包含`请`关键词时，会触发查询通义千问API。
+> 小爱音箱默认 TTS 读 Qian Wen 存在一些问题，因此念出的名称也做了一些调整。
+
+
+## 三、接入 GPT 等模型时更具体的步骤（原始仓库教程）
 
 - `pip install -U --force-reinstall xiaogpt`
 - 参考我 fork 的 [MiService](https://github.com/yihong0618/MiService) 项目 README 并在本地 terminal 跑 `micli list` 拿到你音响的 DID 成功 **别忘了设置 export MI_DID=xxx** 这个 MI_DID 用
