@@ -104,6 +104,7 @@ https://user-images.githubusercontent.com/15976103/226803357-72f87a41-a15b-409e-
 快捷运行：
 > 本 fork 中将千问模型改为 qwen_max（因为 24 年初 qwen_max 限免，不计算 token 费用）
 > 若需要调整回 qwen_turbo 等其他模型，可在 `qwen_bot.py` 中搜索替换 `Generation.Models.qwen_max`
+> 同时为了使用 qwen_max，本仓库升级了部分保版本：`dashscope==1.14.1`
 
     xiaogpt --hardware L06A --mute_xiaoai --use_qwen --qwen_key 'sk-xxxxxx' --stream
 
@@ -137,7 +138,7 @@ https://user-images.githubusercontent.com/15976103/226803357-72f87a41-a15b-409e-
 
 
 接下来即可与小爱音箱对话，包含`请`关键词时，会触发查询通义千问API。
-
+> 小爱音箱默认 TTS 读 Qian Wen 存在一些问题，因此念出的名称也做了一些调整。
 
 
 ## 三、接入 GPT 等模型时更具体的步骤（原始仓库教程）

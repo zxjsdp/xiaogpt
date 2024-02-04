@@ -11,7 +11,7 @@ from xiaogpt.bot.base_bot import BaseBot, ChatHistoryMixin
 
 
 class QwenBot(ChatHistoryMixin, BaseBot):
-    name = "Qian Wen"
+    name = "阿里通义千问 AI"
 
     def __init__(self, qwen_key: str) -> None:
         import dashscope
@@ -32,7 +32,7 @@ class QwenBot(ChatHistoryMixin, BaseBot):
         self.history.append({"role": Role.USER, "content": query})
 
         response = Generation.call(
-            Generation.Models.qwen_turbo,
+            Generation.Models.qwen_max,
             messages=self.history,
             result_format="message",  # set the result to be "message" format.
         )
@@ -71,7 +71,7 @@ class QwenBot(ChatHistoryMixin, BaseBot):
 
         self.history.append({"role": Role.USER, "content": query})
         responses = Generation.call(
-            Generation.Models.qwen_turbo,
+            Generation.Models.qwen_max,
             messages=self.history,
             result_format="message",  # set the result to be "message" format.
             stream=True,
