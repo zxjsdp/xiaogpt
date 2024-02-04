@@ -52,14 +52,19 @@ API Key 用于后续调用通义千问的 `--qwen_key` 参数：
 
 获取步骤：
 
-第1步：
-> 建议使用 virtualenv，避免污染全局 Python 环境
-> 如果想要本地做一些修改，也可以：`git clone git@github.com:yihong0618/MiService.git` 后 `pip3 install .`
+第1步（若无特殊诉求，可直接安装 miservice_fork 包）：
 
-    pip install miservice_fork`
+    pip install miservice_fork
+
+如果有修改诉求，可使用 virtualenv 本地创建虚拟环境并安装（避免污染全局 Python 环境）：
+
+    git clone git@github.com:yihong0618/MiService.git
+    python3 -m venv .venv
+    source .venv/bin/activate
+    pip3 install -e .
 
 第2步（设置环境变量）：
-> 注：如果遇到特殊字符问题，也可以直接修改 `miservice/cli.py` 中 `env.get("MI_USER")` 及 `env.get("MI_PASS")` 部分，直接替换为真是的用户名及密码。
+> 注：如果遇到特殊字符问题，也可以直接修改 `miservice/cli.py` 中 `env.get("MI_USER")` 及 `env.get("MI_PASS")` 部分，直接替换为真实的用户名及密码。
 
     export MI_USER=xxxx
     export MI_PASS=xxx
@@ -84,18 +89,34 @@ API Key 用于后续调用通义千问的 `--qwen_key` 参数：
 > 2. 在 `self.token['userId'] = resp['userId']` 的地方报错，可以看看 MI_USER 是否用的是小米 ID 而非可以用于登录的小米邮箱或用户名。
 
 
-### 2.3 运行 xiaogpt
+### 2.3 安装 xiaogpt
 
-安装 xiaogpt 及依赖
-> 建议使用 virtualenv，避免污染全局 Python 环境
+本地安装，拉取仓库：
 
-    pip install -U --force-reinstall xiaogpt
+    git clone https://github.com/zxjsdp/xiaogpt.git
 
-    # 或本地安装
-    git clone https://github.com/yihong0618/xiaogpt.git
-    pip3 install .
+创建 Python virtualenv，避免污染全局 Python 环境：
 
-参考 2.2 获取小爱设备 DID 后，设置 MI_DID 环境变量
+    cd xiaogpt
+    python3 -m venv .venv
+    source .venv/bin/activate
+
+在 virtualenv 中安装 xiaogpt 及依赖：
+
+    pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+    # 或
+    pip3 install -e . -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+
+如果没有特殊修改诉求，也可直接全局安装原始仓库 yihong0618/xiaogpt 的包：
+
+    pip3 install -U --force-reinstall xiaogpt -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+
+### 2.4 运行 xiaogpt
+
+参考 2.2 获取小爱设备 DID 后，设置 MI_DID 环境变量：
 
     export MI_DID=xxxxxx
 
