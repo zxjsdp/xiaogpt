@@ -114,7 +114,7 @@ API Key 用于后续调用通义千问的 `--qwen_key` 参数：
     pip3 install -U --force-reinstall xiaogpt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 
-### 2.4 运行 xiaogpt
+### 2.4 使用 Python 直接运行 xiaogpt
 
 参考 2.2 获取小爱设备 DID 后，设置 MI_DID 环境变量：
 
@@ -130,10 +130,6 @@ API Key 用于后续调用通义千问的 `--qwen_key` 参数：
 > 同时为了使用 qwen_max，本仓库升级了部分保版本：`dashscope==1.14.1`
 
     xiaogpt --hardware L06A --mute_xiaoai --use_qwen --qwen_key 'sk-xxxxxx' --stream
-
-常用参数：
-
-    -- stream  # 是否流式输出
 
 也可以通过配置文件运行，复制仓库下的 `xiao_config.json.example`，修改对应字段（以运行千问为例）：
 
@@ -164,6 +160,27 @@ API Key 用于后续调用通义千问的 `--qwen_key` 参数：
 
 接下来即可与小爱音箱对话，包含`请`关键词时，会触发查询通义千问API。
 > 小爱音箱默认 TTS 读 Qian Wen 存在一些问题，因此念出的名称也做了一些调整。
+
+
+### 2.5 使用 Docker 运行 xiaogpt
+
+构建 Docker 镜像：
+
+    docker build -t xiaogpt .
+
+运行 Docker 镜像：
+
+    # 临时调试（挂载本机目录下的 config 文件）
+    docker run --rm -it -p 9527:9527 -v ./xiao_config.json:/app/xiao_config.json xiaogpt
+
+    # 后台长期运行（挂载容器外的 config 文件）
+    docker run --name xiaogpt -dp 9527:9527 -v /path/to/xiao_config.json:/app/xiao_config.json xiaogpt
+
+
+常见错误：
+
+1. 如果运行报错`登录验证失败`，可以检查一下 xiao_config.json 里面的小米用户名及密码是否有正确填写。
+
 
 
 ## 三、接入 GPT 等模型时更具体的步骤（原始仓库教程）
