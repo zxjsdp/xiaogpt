@@ -1,4 +1,4 @@
-# xiaogpt（小爱音箱接入大语言模型 LLM & NAS Docker 部署）
+# xiaogpt（小爱音箱接入大语言模型 LLM & PC/NAS Docker 部署）
 
 [![Docker Image Version (latest by date)](https://img.shields.io/docker/v/zxjsdp/xiaogpt?color=%23086DCD&label=Docker%20镜像)](https://hub.docker.com/repository/docker/zxjsdp/xiaogpt)
 
@@ -10,7 +10,7 @@
 
 本仓库由 [yihong0618/xiaogpt](https://github.com/yihong0618/xiaogpt) fork 而来，主要改动：
 1. 针对国内网络环境及大部分人的情况，将阿里巴巴`通义千问`的接入作为主线，简化使用成本；
-2. 对 Docker 部署进行了一些调整和细化，可以很方便的在群晖 Synology NAS 上部署并为小爱接入千问。
+2. 对 Docker 部署进行了一些调整和细化，可以很方便的在 PC 或群晖 NAS 上部署并为小爱接入千问。
 
 因为修改和优化的侧重方向不同，因此暂时先不合并回原仓库。如果希望优先接入的是 GPT系列/Gemini 等模型基座，建议直接使用原作者 [yihong0618/xiaogpt](https://github.com/yihong0618/xiaogpt) 在 PyPI 上已经上传好的包，非常方便。
 
@@ -161,7 +161,7 @@ API Key 用于后续调用通义千问的 `--qwen_key` 参数：
 > 备注：小爱音箱默认 TTS 读 Qian Wen 存在一些问题，因此念出的名称也做了一些调整。
 
 
-### 2.5 使用 Docker 运行 xiaogpt（支持在群晖 Docker 上直接运行）
+### 2.5 使用 Docker 运行 xiaogpt（支持在群晖 Synology Docker 上直接运行）
 
 从 DockerHub 拉取面向接入通义千问优化后的 image：
 
