@@ -8,11 +8,11 @@
 
 小爱（小米）音箱接入通义千问、ChatGPT 等大语言模型。
 
-本仓库由 [yihong0618/xiaogpt](https://github.com/yihong0618/xiaogpt) fork 而来，主要区别：
+本仓库由 [yihong0618/xiaogpt](https://github.com/yihong0618/xiaogpt) fork 而来，主要改动：
 1. 针对国内网络环境及大部分人的情况，将阿里巴巴`通义千问`的接入作为主线，简化使用成本；
 2. 对 Docker 部署进行了一些调整和细化，可以很方便的在群晖 Synology NAS 上部署并为小爱接入千问。
 
-如果希望优先接入的是 GPT系列/Gemini 等模型基座，建议可以直接使用原作者 [yihong0618/xiaogpt](https://github.com/yihong0618/xiaogpt) 打好的 PyPI 包，非常方便。
+因为修改和优化的侧重方向不同，因此暂时先不合并回原仓库。如果希望优先接入的是 GPT系列/Gemini 等模型基座，建议直接使用原作者 [yihong0618/xiaogpt](https://github.com/yihong0618/xiaogpt) 在 PyPI 上已经上传好的包，非常方便。
 
 https://user-images.githubusercontent.com/15976103/226803357-72f87a41-a15b-409e-94f5-e2d262eecd53.mp4
 
@@ -161,7 +161,7 @@ API Key 用于后续调用通义千问的 `--qwen_key` 参数：
 > 备注：小爱音箱默认 TTS 读 Qian Wen 存在一些问题，因此念出的名称也做了一些调整。
 
 
-### 2.5 使用 Docker 运行 xiaogpt
+### 2.5 使用 Docker 运行 xiaogpt（支持在群晖 Docker 上直接运行）
 
 从 DockerHub 拉取面向接入通义千问优化后的 image：
 
@@ -187,7 +187,8 @@ API Key 用于后续调用通义千问的 `--qwen_key` 参数：
 
 
 
-## 三、接入 GPT 等模型时更具体的步骤（原始仓库教程）
+## 三、其他信息（原始仓库教程）
+### 3.1 接入 GPT 等模型基座时更具体的步骤
 
 - `pip install -U --force-reinstall xiaogpt`
 - 参考我 fork 的 [MiService](https://github.com/yihong0618/MiService) 项目 README 并在本地 terminal 跑 `micli list` 拿到你音响的 DID 成功 **别忘了设置 export MI_DID=xxx** 这个 MI_DID 用
@@ -264,7 +265,7 @@ export SERPAPI_API_KEY=${your_serpapi_key}
 python3 xiaogpt.py --hardware Lx06 --use_langchain --mute_xiaoai --stream --openai_key ${your_api_key} --serpapi_api_key ${your_serpapi_key}
 ```
 
-## config.json
+### 3.2 config.json
 
 如果想通过单一配置文件启动也是可以的, 可以通过 `--config` 参数指定配置文件, config 文件必须是合法的 JSON 格式
 参数优先级
@@ -300,7 +301,7 @@ python3 xiaogpt.py
 ChatGLM [文档](http://open.bigmodel.cn/doc/api#chatglm_130b)
 Bard-API [参考](https://github.com/dsdanielpark/Bard-API)
 
-## 配置项说明
+### 3.3 配置项说明
 
 | 参数                  | 说明                                                                    | 默认值                                                                                                    |可选值            |
 | --------------------- | ----------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------- |
@@ -336,14 +337,14 @@ Bard-API [参考](https://github.com/dsdanielpark/Bard-API)
 
 [这里]: https://github.com/acheong08/EdgeGPT#getting-authentication-required
 
-## 注意
+### 3.4 注意
 
 1. 请开启小爱同学的蓝牙
 2. 如果要更改提示词和 PROMPT 在代码最上面自行更改
 3. 目前已知 LX04、X10A 和 L05B L05C 可能需要使用 `--use_command`，否则可能会出现终端能输出GPT的回复但小爱同学不回答GPT的情况。这几个型号也只支持小爱原本的 tts.
 4. 在wsl使用时, 需要设置代理为 http://wls的ip:port(vpn的代理端口), 否则会出现连接超时的情况, 详情 [报错： Error communicating with OpenAI](https://github.com/yihong0618/xiaogpt/issues/235)
 
-## QA
+### 3.5 QA
 
 1. 用破解么？不用
 2. 你做这玩意也没用啊？确实。。。但是挺好玩的，有用对你来说没用，对我们来说不一定呀
@@ -355,13 +356,13 @@ Bard-API [参考](https://github.com/dsdanielpark/Bard-API)
    若是linux则请放到当前用户的home文件夹，此时你可以重新执行先前的命令，不出意外即可正常登录（但cookie可能会过一段时间失效，需要重新获取）<br>
    详情请见 [https://github.com/yihong0618/xiaogpt/issues/332](https://github.com/yihong0618/xiaogpt/issues/332)
 
-## 视频教程
+### 3.6 视频教程
 
 https://www.youtube.com/watch?v=K4YA8YwzOOA
 
-## Docker
+### 3.7 Docker
 
-### 常规用法
+#### 常规用法
 
 X86/ARM Docker Image: `yihong0618/xiaogpt`
 
@@ -375,7 +376,7 @@ docker run -e OPENAI_API_KEY=<your-openapi-key> yihong0618/xiaogpt <命令行参
 docker run -e OPENAI_API_KEY=<your-openapi-key> yihong0618/xiaogpt --account=<your-xiaomi-account> --password=<your-xiaomi-password> --hardware=<your-xiaomi-hardware> --use_chatgpt_api
 ```
 
-### 使用配置文件
+#### 使用配置文件
 
 xiaogpt的配置文件可通过指定volume /config，以及指定参数--config来处理，如
 
@@ -383,7 +384,7 @@ xiaogpt的配置文件可通过指定volume /config，以及指定参数--config
 docker run -v <your-config-dir>:/config yihong0618/xiaogpt --config=/config/config.json
 ```
 
-### 本地编译Docker Image
+#### 本地编译Docker Image
 
 ```shell
  docker build -t xiaogpt .
@@ -401,13 +402,13 @@ docker build --build-arg PIP_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple 
  docker buildx build --platform=linux/amd64 -t xiaogpt-x86 .
 ```
 
-### 第三方 TTS
+#### 第三方 TTS
 
 我们目前支持两种第三方 TTS：edge/openai
 
 [edge-tts](https://github.com/rany2/edge-tts) 提供了类似微软tts的能力
 
-#### Usage
+##### Usage
 
 你可以通过参数 `tts`, 来启用它
 
@@ -424,7 +425,7 @@ docker build --build-arg PIP_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple 
 edge-tts --list-voices
 ```
 
-#### 在容器中使用edge-tts
+##### 在容器中使用edge-tts
 
 由于 Edge TTS 启动了一个本地的 HTTP 服务，所以需要将容器的端口映射到宿主机上，并且指定本地机器的 hostname:
 
@@ -434,11 +435,11 @@ docker run -v <your-config-dir>:/config -p 9527:9527 -e XIAOGPT_HOSTNAME=<your i
 
 注意端口必须映射为与容器内一致，XIAOGPT_HOSTNAME 需要设置为宿主机的 IP 地址，否则小爱无法正常播放语音。
 
-## 推荐的 fork
+### 3.8 推荐的 fork
 
 - [XiaoBot](https://github.com/longbai/xiaobot) -> Go语言版本的Fork, 带支持不同平台的UI
 
-## 感谢
+### 3.9 感谢
 
 - [xiaomi](https://www.mi.com/)
 - [PDM](https://pdm.fming.dev/latest/)
@@ -446,6 +447,6 @@ docker run -v <your-config-dir>:/config -p 9527:9527 -e XIAOGPT_HOSTNAME=<your i
 - @[pjq](https://github.com/pjq) 给了这个项目非常多的帮助
 - @[frostming](https://github.com/frostming) 重构了一些代码，支持了`持续会话功能`
 
-## 赞赏
+### 3.10 赞赏
 
 谢谢就够了
