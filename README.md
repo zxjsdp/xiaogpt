@@ -1,35 +1,33 @@
-# xiaogpt（小爱音箱接入大语言模型 LLM）
+# xiaogpt（小爱音箱接入大语言模型 LLM & NAS Docker 部署）
 
-[![PyPI](https://img.shields.io/pypi/v/xiaogpt?style=flat-square)](https://pypi.org/project/xiaogpt)
-[![Docker Image Version (latest by date)](https://img.shields.io/docker/v/yihong0618/xiaogpt?color=%23086DCD&label=docker%20image)](https://hub.docker.com/r/yihong0618/xiaogpt)
-
+[![Docker Image Version (latest by date)](https://img.shields.io/docker/v/zxjsdp/xiaogpt?color=%23086DCD&label=Docker%20镜像)](https://hub.docker.com/repository/docker/zxjsdp/xiaogpt)
 
 ## 一、简介
 
 ### 1.1 简介
 
-小爱音箱支持接入 ChatGPT、通义千问等大语言模型。
+小爱（小米）音箱接入通义千问、ChatGPT 等大语言模型。
 
-本仓库从 [yihong0618/xiaogpt](https://github.com/yihong0618/xiaogpt) fork 而来，针对部分场景做了一些优化调整，特别是针对国内网络环境，对阿里巴巴`通义千问`的接入和使用做了更为详细的说明。
+本仓库由 [yihong0618/xiaogpt](https://github.com/yihong0618/xiaogpt) fork 而来，主要区别：
+1. 针对国内网络环境及大部分人的情况，将阿里巴巴`通义千问`的接入作为主线，简化使用成本；
+2. 对 Docker 部署进行了一些调整和细化，可以很方便的在群晖 Synology NAS 上部署并为小爱接入千问。
 
-Play ChatGPT and other LLM with Xiaomi AI Speaker
-
-![image](https://user-images.githubusercontent.com/15976103/220028375-c193a859-48a1-4270-95b6-ef540e54a621.png)
+如果希望优先接入的是 GPT系列/Gemini 等模型基座，建议可以直接使用原作者 [yihong0618/xiaogpt](https://github.com/yihong0618/xiaogpt) 打好的 PyPI 包，非常方便。
 
 https://user-images.githubusercontent.com/15976103/226803357-72f87a41-a15b-409e-94f5-e2d262eecd53.mp4
 
 
-### 1.2 支持的 AI LLM 类型
+### 1.2 支持的 AI 大模型类型
 
-- GPT3
+- [通义千问系列](https://help.aliyun.com/zh/dashscope/developer-reference/api-details)
+- GPT 系列
 - ChatGPT
 - New Bing
 - [ChatGLM](http://open.bigmodel.cn/)
 - [Gemini](https://makersuite.google.com/app/apikey)
 - [Bard](https://github.com/dsdanielpark/Bard-API)
-- [通义千问](https://help.aliyun.com/zh/dashscope/developer-reference/api-details)
 
-### 1.3 一点原理（by [yihong0618](https://github.com/yihong0618)）
+### 1.3 一点原理（by 原作者 [yihong0618](https://github.com/yihong0618)）
 
 [不用 root 使用小爱同学和 ChatGPT 交互折腾记](https://github.com/yihong0618/gitblog/issues/258)
 
@@ -39,32 +37,32 @@ https://user-images.githubusercontent.com/15976103/226803357-72f87a41-a15b-409e-
 ### 2.1 获取阿里云模型服务灵积 DashScope API key
 
 API Key 用于后续调用通义千问的 `--qwen_key` 参数：
-1. 若没有阿里云账号，需进行注册：<https://www.aliyun.com/>。
-2. 前往 API key 管理页面，创建新的 API-Key：<https://dashscope.console.aliyun.com/apiKey>。
+1. 若没有阿里云账号，需进行注册：<https://www.aliyun.com/>；
+2. 前往 API key 管理页面，创建新的 API-Key：<https://dashscope.console.aliyun.com/apiKey>；
 3. 后续 API key 使用情况，可在总览页面查看：<https://dashscope.console.aliyun.com/overview>。
 
 
 ### 2.2 获取小米音响DID
 
 参考：
-- Fork 版：<https://github.com/yihong0618/MiService>
+- MiService Fork 版：<https://github.com/yihong0618/MiService>
 - 原始仓库：<https://github.com/Yonsm/MiService>
 
 获取步骤：
 
 第1步（若无特殊诉求，可直接安装 miservice_fork 包）：
 
-    pip install miservice_fork
+    pip install miservice_fork -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 如果有修改诉求，可使用 virtualenv 本地创建虚拟环境并安装（避免污染全局 Python 环境）：
 
     git clone git@github.com:yihong0618/MiService.git
     python3 -m venv .venv
     source .venv/bin/activate
-    pip3 install -e .
+    pip3 install .
 
 第2步（设置环境变量）：
-> 注：如果遇到特殊字符问题，也可以直接修改 `miservice/cli.py` 中 `env.get("MI_USER")` 及 `env.get("MI_PASS")` 部分，直接替换为真实的用户名及密码。
+> 注：如果遇到特殊字符等奇怪的问题，也可以直接修改 `miservice/cli.py` 中 `env.get("MI_USER")` 及 `env.get("MI_PASS")` 部分，直接替换为真实的用户名及密码。
 
     export MI_USER=xxxx
     export MI_PASS=xxx
@@ -80,16 +78,16 @@ API Key 用于后续调用通义千问的 `--qwen_key` 参数：
 
     micli list
 
-后续可将 MI_DID 设置进环境变量，供后续 xiaogpt 获取。
+后续可将 MI_DID 设置进环境变量，供 xiaogpt 获取。
 
-> 获取 DID 报错时，可以尝试更换一下无线网络
+> 获取 DID 报错时，可尝试更换一下无线网络
 >
 > 常见问题：
 > 1. 报错 `AttributeError: 'NoneType' object has no attribute 'encode'`，可以看看是否未成功设置环境变量（例如 bash 下是否未使用 export 而是使用了 set）。
 > 2. 在 `self.token['userId'] = resp['userId']` 的地方报错，可以看看 MI_USER 是否用的是小米 ID 而非可以用于登录的小米邮箱或用户名。
 
 
-### 2.3 安装 xiaogpt
+### 2.3 安装 xiaogpt（Clone 仓库后安装及运行）
 
 本地安装，拉取仓库：
 
@@ -105,13 +103,8 @@ API Key 用于后续调用通义千问的 `--qwen_key` 参数：
 
     pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
-    # 或
+    # 或如果需要对源码做一些调整
     pip3 install -e . -i https://pypi.tuna.tsinghua.edu.cn/simple
-
-
-如果没有特殊修改诉求，也可直接全局安装原始仓库 yihong0618/xiaogpt 的包：
-
-    pip3 install -U --force-reinstall xiaogpt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 
 ### 2.4 使用 Python 直接运行 xiaogpt
@@ -120,18 +113,21 @@ API Key 用于后续调用通义千问的 `--qwen_key` 参数：
 
     export MI_DID=xxxxxx
 
-获取小爱音箱设备型号，在小爱音箱底部：
+获取小爱音箱设备型号，在小爱音箱底部，例如：
 
     L06A
 
-快捷运行：
-> 本 fork 中将千问模型改为 qwen_max（因为 24 年初 qwen_max 限免，不计算 token 费用）
-> 若需要调整回 qwen_turbo 等其他模型，可在 `qwen_bot.py` 中搜索替换 `Generation.Models.qwen_max`
-> 同时为了使用 qwen_max，本仓库升级了部分保版本：`dashscope==1.14.1`
+本地快捷运行：
 
     xiaogpt --hardware L06A --mute_xiaoai --use_qwen --qwen_key 'sk-xxxxxx' --stream
 
-也可以通过配置文件运行，复制仓库下的 `xiao_config.json.example`，修改对应字段（以运行千问为例）：
+> 备注：
+>
+> 本 fork 中将千问模型改为了 qwen_max（因为 24 年初 qwen_max 限免，暂不计算 token 费用）。若需要调整回 qwen_turbo 等其他模型，可在 `qwen_bot.py` 中搜索替换 `Generation.Models.qwen_max`
+>
+> 同时为了使用 qwen_max，本仓库升级了部分包版本：`dashscope==1.14.1`
+
+也可以通过配置文件运行，复制仓库下的 `xiao_config.json.example`，修改对应字段（以运行千问的 config 为例）：
 
     {
       "use_qwen": true,
@@ -157,29 +153,37 @@ API Key 用于后续调用通义千问的 `--qwen_key` 参数：
 
     python3 xiaogpt.py --config xiao_config.json
 
+    # 或直接
+    xiaogpt --config xiao_config.json
 
-接下来即可与小爱音箱对话，包含`请`关键词时，会触发查询通义千问API。
-> 小爱音箱默认 TTS 读 Qian Wen 存在一些问题，因此念出的名称也做了一些调整。
+
+接下来即可与小爱音箱对话，包含`请`关键词时，会触发查询通义千问API（例如：呼叫“小爱同学”唤起对话后，说“请问你是谁”）。
+> 备注：小爱音箱默认 TTS 读 Qian Wen 存在一些问题，因此念出的名称也做了一些调整。
 
 
 ### 2.5 使用 Docker 运行 xiaogpt
 
-构建 Docker 镜像：
+从 DockerHub 拉取面向接入通义千问优化后的 image：
+
+    docker pull zxjsdp/xiaogpt:latest
+
+网络条件不佳的话，也可基于本 repo 直接构建 Docker 镜像：
 
     docker build -t xiaogpt .
 
 运行 Docker 镜像：
+> 注：xiaogpt_config.json 文件可以放到本机或 NAS 上，挂载映射到容器里作为配置使用。
 
-    # 临时调试（挂载本机目录下的 config 文件）
+    # 临时调试（挂载映射刚刚修改好的 xiaogpt_config.json 文件）
     docker run --rm -it -p 9527:9527 -v ./xiao_config.json:/app/xiao_config.json xiaogpt
 
-    # 后台长期运行（挂载容器外的 config 文件）
+    # 后台长期运行（挂载容器外的 xiaogpt_config.json 文件）
     docker run --name xiaogpt -dp 9527:9527 -v /path/to/xiao_config.json:/app/xiao_config.json xiaogpt
 
 
 常见错误：
 
-1. 如果运行报错`登录验证失败`，可以检查一下 xiao_config.json 里面的小米用户名及密码是否有正确填写。
+1. 如果运行报错`登录验证失败`，可以检查一下 xiaogpt_config.json 里面的小米用户名及密码是否有正确填写。
 
 
 
