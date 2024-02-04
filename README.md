@@ -138,9 +138,13 @@ API Key 用于后续调用通义千问的 `--qwen_key` 参数：
 也可以通过配置文件运行，复制仓库下的 `xiao_config.json.example`，修改对应字段（以运行千问为例）：
 
     {
-      "hardware": "L06A",
-      "qwen_key": "sk-xxxxxx",
-      "mi_did": "xxxxxx",
+      "use_qwen": true,
+      "hardware": "<小爱设备型号>",
+      "qwen_key": "<阿里云 API Key>",
+      "mi_did": "<小爱设备DID>",
+      "account": "<小米账号>",
+      "password": "<小米密码>",
+      "stream": false,
       "use_command": false,
       "mute_xiaoai": true,
       "verbose": false,
@@ -150,9 +154,7 @@ API Key 用于后续调用通义千问的 `--qwen_key` 参数：
       "keyword": ["请"],
       "change_prompt_keyword": ["更改提示词"],
       "start_conversation": "开始持续对话",
-      "end_conversation": "结束持续对话",
-      "stream": false,
-      "use_qwen": true
+      "end_conversation": "结束持续对话"
     }
 
 然后运行：
