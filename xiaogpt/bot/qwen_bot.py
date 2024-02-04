@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+import json
+import logging
 from http import HTTPStatus
 from typing import Any
 
 from rich import print
 
 from xiaogpt.bot.base_bot import BaseBot, ChatHistoryMixin
+from xiaogpt.config import LOGGING_FILENAME
 
 
 class QwenBot(ChatHistoryMixin, BaseBot):
@@ -20,6 +23,16 @@ class QwenBot(ChatHistoryMixin, BaseBot):
         self.history = []
         dashscope.api_key = qwen_key
 
+        logging.basicConfig(
+            filename=LOGGING_FILENAME,
+            filemode='a',
+            format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S',
+            level=logging.INFO)
+        # 避免 logger 写入的文件中显示大量 miservice 的日志
+        logging.getLogger('miservice').setLevel(logging.WARNING)
+        self.logger = logging.getLogger('qwen_bot')
+
     @classmethod
     def from_config(cls, config):
         return cls(qwen_key=config.qwen_key)
@@ -30,6 +43,9 @@ class QwenBot(ChatHistoryMixin, BaseBot):
 
         # from https://help.aliyun.com/zh/dashscope/developer-reference/api-details
         self.history.append({"role": Role.USER, "content": query})
+
+        self.logger.info('[user]: ' + query)
+        self.logger.info('[传入LLM的会话历史]: ' + json.dumps(self.history, ensure_ascii=False))
 
         response = Generation.call(
             Generation.Models.qwen_max,
@@ -49,17 +65,20 @@ class QwenBot(ChatHistoryMixin, BaseBot):
             first_history = self.history.pop(0)
             self.history = [first_history] + self.history[-5:]
             print(content)
+            self.logger.info('[' + response.output.choices[0]["message"]["role"] + ']: ' + content)
             return content
         else:
-            print(
-                "Request id: %s, Status code: %s, error code: %s, error message: %s"
-                % (
-                    response.request_id,
-                    response.status_code,
-                    response.code,
-                    response.message,
-                )
+            resp_info = "Request id: {}, Status code: {}, error code: {}, \
+                error message: {}".format(
+                response.request_id,
+                response.status_code,
+                response.code,
+                response.message
             )
+
+            print(resp_info)
+            self.logger.info(resp_info)
+
             # we need to pop the wrong history
             print(f"Will pop the wrong question {query}")
             self.history.pop()
@@ -86,17 +105,20 @@ class QwenBot(ChatHistoryMixin, BaseBot):
                 if not role:
                     role = response.output.choices[0]["message"]["role"]
                 print(content, end="")
+                self.logger.info('[' + response.output.choices[0]
+                              ["message"]["role"] + ']: ' + content)
                 yield content
             else:
-                print(
-                    "Request id: %s, Status code: %s, error code: %s, error message: %s"
-                    % (
-                        response.request_id,
-                        response.status_code,
-                        response.code,
-                        response.message,
-                    )
+                resp_info = "Request id: {}, Status code: {}, error code: {}, \
+                    error message: {}".format(
+                    response.request_id,
+                    response.status_code,
+                    response.code,
+                    response.message,
                 )
+                print(resp_info)
+                self.logger.info(resp_info)
+
         self.history.append({"role": role, "content": full_content})
         first_history = self.history.pop(0)
         self.history = [first_history] + self.history[-5:]

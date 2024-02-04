@@ -12,6 +12,8 @@ LATEST_ASK_API = "https://userprofile.mina.mi.com/device_profile/v2/conversation
 COOKIE_TEMPLATE = "deviceId={device_id}; serviceToken={service_token}; userId={user_id}"
 WAKEUP_KEYWORD = "小爱同学"
 
+LOGGING_FILENAME = "logs.txt"
+
 HARDWARE_COMMAND_DICT = {
     # hardware: (tts_command, wakeup_command)
     "LX06": ("5-1", "5-5"),

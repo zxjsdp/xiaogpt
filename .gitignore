@@ -135,3 +135,5 @@ config/
 *.mp3
 .pdm-python
 .pdm-build/
+
+logs.txt
