@@ -201,7 +201,10 @@ def main():
 
     miboy = MiGPT(config)
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(miboy.run_forever())
+    try:
+        loop.run_until_complete(miboy.run_forever())
+    except KeyboardInterrupt:
+        print('程序退出！')
 
 
 if __name__ == "__main__":
