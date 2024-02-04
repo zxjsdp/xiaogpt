@@ -36,11 +36,13 @@ https://user-images.githubusercontent.com/15976103/226803357-72f87a41-a15b-409e-
 
 ## 二、接入通义千问的示例
 
-### 2.1 准备
+### 2.1 获取阿里云模型服务灵积 DashScope API key
 
-1. 阿里云模型服务灵积 DashScope - 通义千问 API key
-2. 小爱音响
-3. python3.8+
+API Key 用于后续调用通义千问的 `--qwen_key` 参数：
+1. 若没有阿里云账号，需进行注册：<https://www.aliyun.com/>。
+2. 前往 API key 管理页面，创建新的 API-Key：<https://dashscope.console.aliyun.com/apiKey>。
+3. 后续 API key 使用情况，可在总览页面查看：<https://dashscope.console.aliyun.com/overview>。
+
 
 ### 2.2 获取小米音响DID
 
